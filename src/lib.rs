@@ -16,12 +16,7 @@ struct AgeVerificationCircuit<F: Field>{
             self,
             cs: ConstraintSystemRef<F>,
         ) -> Result<(), SynthesisError>{
-            
-            // // lets create a namespace for better oraganization
-            // // sice the namespace method is not in the enum ConstarintSystemref
-            // let ns = cs.namespace(|| "age_verification");
-            
-            
+                
             // allocating private inputs
             let birthdate_var = cs.new_witness_variable(|| {
                 self.birthdate.ok_or(SynthesisError::AssignmentMissing)
@@ -72,11 +67,7 @@ struct AgeVerificationCircuit<F: Field>{
                 lc!() + difference,
                 lc!() + difference,
             )?;
-            // cs.enforce_constraint(
-            //     lc!() + age_var - legal_age_var,
-            //     lc!() + (F::one(), Variable::One),
-            //     lc!() + age_var - legal_age_var,
-            // )?;
+            
 
             Ok(())
         }
@@ -108,7 +99,7 @@ struct AgeVerificationCircuit<F: Field>{
             // edge case when age is just below legal age
 
             let birthdate = Fq::from(1001u64); // 1001 days since epoch
-            let current_date = Fq::from(7570u64); // 8000 days since epoch
+            let current_date = Fq::from(7205u64); // 7570 days since epoch
             // let legal_age = Fq::from(18 * 365u64); // 18 yrs in days
             let circuit = AgeVerificationCircuit{
                 birthdate : Some(birthdate),
@@ -121,8 +112,8 @@ struct AgeVerificationCircuit<F: Field>{
         assert!(!cs.is_satisfied().unwrap());
 
         // edge case where the currentdate is before the birthdate
-        let birthdate = Fq::from(8000u64); // birthdate: 8000 days since epoch
-        let current_date = Fq::from(1000u64); //current date: 1000 days since epoch
+        let birthdate = Fq::from(9000u64); // birthdate: 8000 days since epoch
+        let current_date = Fq::from(7570u64); //current date: 1000 days since epoch
 
         let circuit = AgeVerificationCircuit {
             birthdate: Some(birthdate),
@@ -135,8 +126,8 @@ struct AgeVerificationCircuit<F: Field>{
         assert!(!cs.is_satisfied().unwrap());
 
         // edge case where age is zero like the birthdate is same as current date
-        let birthdate = Fq::from(8000u64); // birthdate: 8000 days since epoch
-        let current_date = Fq::from(8000u64); // current date: 8000 days since epoch
+        let birthdate = Fq::from(7570u64); // birthdate: 8000 days since epoch
+        let current_date = Fq::from(7570u64); // current date: 8000 days since epoch
 
         let circuit = AgeVerificationCircuit {
             birthdate: Some(birthdate),
@@ -148,8 +139,8 @@ struct AgeVerificationCircuit<F: Field>{
         circuit.generate_constraints(cs.clone()).unwrap();
         assert!(!cs.is_satisfied().unwrap());
         // edge case where there are very large values for birthdate and currentdate
-        let birthdate = Fq::from(u64::MAX); // birthdate: maximum u64 value
-        let current_date = Fq::from(u64::MAX - 1); // current date: one day before maximum
+        let birthdate = Fq::from(u64::MAX - 1000); // birthdate: maximum u64 value
+        let current_date = Fq::from(u64::MAX); // current date: one day before maximum
         let legal_age = Fq::from(18 * 365u64); // legal age 18 years in days
 
         let circuit = AgeVerificationCircuit {
