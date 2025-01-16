@@ -1,3 +1,5 @@
+mod groth16;
+
 use ark_ff::Field;
 use ark_relations::r1cs::{ConstraintSynthesizer,ConstraintSystemRef, SynthesisError,Variable};
 use ark_relations::lc;
