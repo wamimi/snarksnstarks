@@ -34,6 +34,15 @@ impl Groth16AgeVerifier{
         current_date: Fr,
         legal_age: Fr,) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
         let rng = &mut thread_rng();
+
+        // creating the circuit with actual inputs
+        let circuit = AgeVerificationCircuit {
+            birthdate: Some(birthdate),
+            current_date: Some(current_date),
+            legal_age,
+        };
+        //generate the proof
+        let proof = create_random_proof(circuit, &self.provingkey, rng)?;
     }
 }
 
