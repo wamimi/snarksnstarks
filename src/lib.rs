@@ -157,5 +157,23 @@ struct AgeVerificationCircuit<F: Field>{
 
         }
     }
+    mod tests {
+        use super::*;
+        use ark_test_curves::bls12_381::Fr as Fq;
+        use ark_relations::r1cs::ConstraintSystem;
+    
+        #[test]
+        fn test_age_verification_circuit() {
+            // Generate parameters
+            let params = AgeVerificationCircuit::<Fq>::generate_parameters();
+            let vk = &params.vk;
+    
+            // Valid case where age is exactly legal age
+            let birthdate = Fq::from(1000u64); // 1000 days since epoch
+            let current_date = Fq::from(7570u64); // 8000 days since epoch
+            let legal_age = Fq::from(18 * 365u64); // 18 years in days
+            let proof = AgeVerificationCircuit::create_proof(&params, birthdate, current_date, legal_age);
+            let public_inputs = vec![legal_age];
+            assert!(AgeVerificationCircuit::verify_proof(vk, &proof, &public_i
 
 
